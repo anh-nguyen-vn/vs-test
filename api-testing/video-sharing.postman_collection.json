@@ -1,0 +1,319 @@
+{
+	"info": {
+		"_postman_id": "93ab8eb5-01c6-42d6-a69a-f06b71e64594",
+		"name": "video-sharing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2f1b564c-209a-44a3-b0a4-a7c60e289c04",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response code is success\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status.code).to.eql(\"success\");",
+							"});",
+							"pm.test(\"Created id is a number\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.id).to.be.a('number');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "45811252-c109-40df-af7b-1f0d177fb4df",
+						"exec": [
+							"pm.variables.set(\"user_email\", pm.variables.replaceIn('{{$randomEmail}}'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "test_client_id",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "test_client_secret",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"profile\": {\n        \"email\": \"{{user_email}}\"\n    },\n    \"identity\": {\n        \"username\": \"{{user_email}}\",\n        \"password\": \"N54VFP7VDstMOo1TEEOv4YiIJrom4rHfYlHSllFxAMa55Yc9zl3heXBFiIoBuoRkKgXpjelzXOrR8ZGKAkXbvJmB5L1zevKSD+3gcz3RSIh4Ktizm1myqKvnh5hLEr1aHZJck2/D4U+/8IR3Bj08tPkpxzTVYirAS/TnD3sAxpg=\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_basepath}}/user/v1.0/users",
+					"host": [
+						"{{api_basepath}}"
+					],
+					"path": [
+						"user",
+						"v1.0",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4a4e2460-a676-4b3f-bb38-caa352769997",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Access token is a string\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.access_token).to.be.a('string');",
+							"    pm.variables.set(\"access_token\", jsonData.access_token);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9716a724-46af-422f-8cf6-7f12c5d83778",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "client_id",
+						"value": "test_client_id"
+					},
+					{
+						"key": "client_secret",
+						"value": "test_client_secret"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{user_email}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "N54VFP7VDstMOo1TEEOv4YiIJrom4rHfYlHSllFxAMa55Yc9zl3heXBFiIoBuoRkKgXpjelzXOrR8ZGKAkXbvJmB5L1zevKSD+3gcz3RSIh4Ktizm1myqKvnh5hLEr1aHZJck2/D4U+/8IR3Bj08tPkpxzTVYirAS/TnD3sAxpg=",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "test_client_id",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "{{api_basepath}}/v1.0/user/oauth/token",
+					"host": [
+						"{{api_basepath}}"
+					],
+					"path": [
+						"v1.0",
+						"user",
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "share video",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "55819822-8a13-4ec3-abb6-73a3cb181f45",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response code is success\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status.code).to.eql(\"success\");",
+							"});",
+							"pm.test(\"Created id is a number\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.id).to.be.a('number');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "test_client_id",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "test_client_secret",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"https://{{$randomAlphaNumeric}}\",\n    \"title\": \"title\",\n    \"description\": \"description\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_basepath}}/user/v1.0/videos",
+					"host": [
+						"{{api_basepath}}"
+					],
+					"path": [
+						"user",
+						"v1.0",
+						"videos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get shared videos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e7c21d7b-111f-4e74-86c2-11b04efb8ad3",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response code is success\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status.code).to.eql(\"success\");",
+							"});",
+							"pm.test(\"Data is a page of shared videos\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    for (i = 0; i < jsonData.data.data.length; i++) {",
+							"        pm.expect(jsonData.data.data[i].url).to.be.a('string');",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "test_client_id",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "test_client_secret",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{api_basepath}}/user/v1.0/videos?paging=true&page_index=1",
+					"host": [
+						"{{api_basepath}}"
+					],
+					"path": [
+						"user",
+						"v1.0",
+						"videos"
+					],
+					"query": [
+						{
+							"key": "paging",
+							"value": "true"
+						},
+						{
+							"key": "page_index",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "f1b4ecf7-3e58-4abd-acba-15322d3ac829",
+			"key": "user_email",
+			"value": ""
+		},
+		{
+			"id": "bcfbdc38-0546-4b8d-b396-c0ef012e00c2",
+			"key": "access_token",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
